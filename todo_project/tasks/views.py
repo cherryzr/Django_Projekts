@@ -41,6 +41,20 @@ def update_task(request, task_id):
     if request.method == "POST":
         task = get_object_or_404(Task, id=task_id)
         data = json.loads(request.body)
-        task.completed = data.get("completed", task.completed)
+
+        # Update title if provided
+        if "title" in data:
+            task.title = data["title"]
+
+        # Update completion status if provided
+        if "completed" in data:
+            task.completed = data["completed"]
+
         task.save()
-        return JsonResponse({"message": "Task updated"})
+        return JsonResponse(
+            {
+                "message": "Task updated",
+                "title": task.title,
+                "completed": task.completed,
+            }
+        )

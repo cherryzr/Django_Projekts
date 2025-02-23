@@ -25,6 +25,39 @@ async function fetchTasks() {
     console.error("Error fetching tasks:", error);
   }
 }
+// Function to edit a task
+function editTask(id) {
+  let taskSpan = document.getElementById(`task-title-${id}`);
+  let oldTitle = taskSpan.innerText;
+
+  let inputField = document.createElement("input");
+  inputField.type = "text";
+  inputField.value = oldTitle;
+
+  let saveButton = document.createElement("button");
+  saveButton.innerText = "Save";
+  saveButton.onclick = function () {
+    updateTask(id, inputField.value);
+  };
+
+  taskSpan.innerHTML = "";
+  taskSpan.appendChild(inputField);
+  taskSpan.appendChild(saveButton);
+}
+
+// Function to update a task title
+async function updateTask(id, newTitle) {
+  try {
+    let response = await fetch(`/api/tasks/update/${id}/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: newTitle }),
+    });
+    if (response.ok) fetchTasks(); // Refresh task list
+  } catch (error) {
+    console.error("Error updating task:", error);
+  }
+}
 
 // Add a new task
 async function addTask() {
